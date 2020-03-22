@@ -1,18 +1,16 @@
 package makechange;
 
 import java.util.Scanner;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 public class MakeChangeApp {
+
+	private static DecimalFormat df = new DecimalFormat("0.00");
 
 	public static void main(String[] args) {
 
 		Scanner w = new Scanner(System.in);
-		
-//Amount: .67, Tendered: .50, Result: Error message
-//Amount: .67, Tendered: 1.00, Result: 1 quarter, 1 nickel, 3 pennies.
-//Amount: .59, Tendered: 1.00, Result: 1 quarter, 1 dime, 1 nickel, 1 penny.
-//Amount: 3.96, Tendered: 20.00, Result: 1 ten dollar bill, 1 five dollar bill, 1 one dollar bill, 4 pennies.
-//Amount: any amount less than 20.00, Tendered: anything greater than amount: correct denominations for correct change.
 
 		System.out.print("What is the price of the item?: $");
 		double priceDouble = w.nextDouble();
@@ -24,31 +22,33 @@ public class MakeChangeApp {
 		double paidDouble = w.nextDouble();
 		int paidInt = (int) (paidDouble * 100);
 		int changeInt = (paidInt - priceInt);
-		double changeDouble = (double)((paidInt - priceInt)/100);
-		
-	if (priceDouble>paidDouble) {
-		System.out.println("Amount: " + priceDouble + ", Tendered: " + paidDouble);
-		 System.out.println("You did not pay enough to make the purchase. "); 
-	} 
-	
-	if(priceDouble == paidDouble) {
-		System.out.println("Amount: " + priceDouble + ", Tendered: " + paidDouble);
-		System.out. println("You paid the exact price for the purchase! No change is due. "); 
-	}
-	
-	if (priceDouble < paidDouble) { 
-		System.out.println("Amount: " + priceDouble + ", Tendered: " + paidDouble);
-		System.out.println("Your change Due is $" + changeDouble); 
+		double changeDouble = (paidDouble - priceDouble);
 
-		int leftoverTwenty = twenty(changeInt);
-		int leftoverTen = ten(changeInt, leftoverTwenty);
-		int leftoverFive = five(changeInt, leftoverTen);
-		int leftoverOne = one(changeInt, leftoverFive);
-		int leftoverQuarter= quarter(changeInt, leftoverOne);		 
-		int leftoverDime= dime(changeInt, leftoverQuarter);		
-		int leftoverNickel= nickel(changeInt, leftoverDime);
-		int leftoverPenny= penny(changeInt, leftoverNickel);
-	}
+		if (priceDouble > paidDouble) {
+			System.out.println("Amount: $" + df.format(priceDouble) + ", Tendered: $" + df.format(paidDouble));
+			System.out.println("You did not pay enough to make the purchase. ");
+		}
+
+		if (priceDouble == paidDouble) {
+			System.out.println("Amount: $" + df.format(priceDouble) + ", Tendered: $" + df.format(paidDouble));
+			System.out.println("You paid the exact price for the purchase! No change is due. ");
+		}
+
+		if (priceDouble < paidDouble) {
+			System.out.println("Amount: $" + df.format(priceDouble) + ", Tendered: $" + df.format(paidDouble));
+			System.out.println("Your change Due is $" + df.format(changeDouble));
+
+			int leftoverTwenty = twenty(changeInt);
+			int leftoverTen = ten(changeInt, leftoverTwenty);
+			int leftoverFive = five(changeInt, leftoverTen);
+			int leftoverOne = one(changeInt, leftoverFive);
+			int leftoverQuarter = quarter(changeInt, leftoverOne);
+			int leftoverDime = dime(changeInt, leftoverQuarter);
+			int leftoverNickel = nickel(changeInt, leftoverDime);
+			int leftoverPenny = penny(changeInt, leftoverNickel);
+			System.out.print(".");
+			w.close();
+		}
 
 	}
 
@@ -74,19 +74,17 @@ public class MakeChangeApp {
 			changeInt = leftoverTwenty;
 			int tenInt = leftoverTwenty / 1000;
 			int leftoverTen = leftoverTwenty % 1000;
-				if (tenInt==0) {
-					System.out.print("");
-					return leftoverTen;
-				}
-				else {
-					System.out.print(tenInt + " Ten Dollar Bill, ");
-					return leftoverTen;
-				}
-		} 
-		else {
+			if (tenInt == 0) {
+				System.out.print("");
+				return leftoverTen;
+			} else {
+				System.out.print(tenInt + " Ten Dollar Bill, ");
+				return leftoverTen;
+			}
+		} else {
+			changeInt = 0;
 			return changeInt;
 		}
-
 	}
 
 	public static int five(int changeInt, int leftoverTen) {
@@ -94,16 +92,15 @@ public class MakeChangeApp {
 			changeInt = leftoverTen;
 			int fiveInt = changeInt / 500;
 			int leftoverFive = changeInt % 500;
-			if  (fiveInt==0) {
+			if (fiveInt == 0) {
 				System.out.print("");
 				return leftoverFive;
+			} else {
+				System.out.print(fiveInt + " Five Dollar Bill, ");
+				return leftoverFive;
 			}
-			else {
-			System.out.print(fiveInt + " Five Dollar Bill, ");
-			return leftoverFive;
-			}
-		} 
-		else {
+		} else {
+			changeInt = 0;
 			return changeInt;
 		}
 	}
@@ -120,15 +117,15 @@ public class MakeChangeApp {
 			if (oneInt == 1) {
 				System.out.print(oneInt + " One Dollar Bill, ");
 				return leftoverOne;
-			}
-			else {
+			} else {
 				return changeInt;
 			}
 		} else {
+			changeInt = 0;
 			return changeInt;
 		}
-
 	}
+
 	public static int quarter(int changeInt, int leftoverOne) {
 		if (leftoverOne != 0) {
 			changeInt = leftoverOne;
@@ -141,15 +138,15 @@ public class MakeChangeApp {
 			if (quarterInt == 1) {
 				System.out.print(quarterInt + " One Quarter, ");
 				return leftoverQuarter;
-			}
-			else {
+			} else {
 				return changeInt;
 			}
 		} else {
+			changeInt = 0;
 			return changeInt;
 		}
-
 	}
+
 	public static int dime(int changeInt, int leftoverQuarter) {
 		if (leftoverQuarter != 0) {
 			changeInt = leftoverQuarter;
@@ -162,16 +159,15 @@ public class MakeChangeApp {
 			if (dimeInt == 1) {
 				System.out.print(dimeInt + " One Dime, ");
 				return leftoverDime;
-			}
-			else {
+			} else {
 				return changeInt;
 			}
-		} 
-		else {
+		} else {
+			changeInt = 0;
 			return changeInt;
 		}
 	}
-	
+
 	public static int nickel(int changeInt, int leftoverDime) {
 		if (leftoverDime != 0) {
 			changeInt = leftoverDime;
@@ -184,34 +180,32 @@ public class MakeChangeApp {
 			if (nickelInt == 1) {
 				System.out.print(nickelInt + " One Nickel, ");
 				return leftoverNickel;
-			}
-			else {
+			} else {
 				return changeInt;
 			}
-		} 
-		else {
+		} else {
+			changeInt = 0;
 			return changeInt;
 		}
 	}
+
 	public static int penny(int changeInt, int leftoverNickel) {
 		if (leftoverNickel != 0) {
 			changeInt = leftoverNickel;
-			int pennyInt = changeInt / 1;
-			int leftoverPenny = changeInt % 1;
+			int pennyInt = changeInt;
+			int leftoverPenny = changeInt;
 			if (pennyInt >= 2) {
-				System.out.print(pennyInt + " Pennies, ");
+				System.out.print(pennyInt + " Pennies");
 				return leftoverPenny;
 			}
 			if (pennyInt == 1) {
-				System.out.print(pennyInt + " One Penny, ");
+				System.out.print(pennyInt + " One Penny");
 				return leftoverPenny;
+			} else {
+				return 0;
 			}
-			else {
-				return changeInt;
-			}
-		} 
-		else {
-			return changeInt;
+		} else {
+			return 0;
 		}
 	}
 }
