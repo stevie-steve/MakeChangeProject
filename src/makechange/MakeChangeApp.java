@@ -173,8 +173,8 @@ public class MakeChangeApp {
 			changeInt = leftoverDime;
 			int nickelInt = changeInt / 5;
 			int leftoverNickel = changeInt % 5;
-			if (nickelInt >= 2) {
-				System.out.print(nickelInt + " Nickels, ");
+			if (nickelInt == 0) {
+				System.out.print("");
 				return leftoverNickel;
 			}
 			if (nickelInt == 1) {
